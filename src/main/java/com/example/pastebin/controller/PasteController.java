@@ -31,7 +31,7 @@ public class PasteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPaste);
     }
 
-    @GetMapping("/public")
+    @GetMapping("/search")
     public List<ListPastaDTO> get10LastPaste() {
         return pasteService.getLastTenPast();
     }
