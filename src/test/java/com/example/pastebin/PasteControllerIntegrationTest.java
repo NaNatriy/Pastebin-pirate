@@ -80,7 +80,7 @@ class PasteControllerIntegrationTest {
     }
 
     @Test
-    void testDetById() {
+    void testGetByText() {
         Paste paste = new Paste();
         paste.setTitle("title");
         paste.setContent("content");
@@ -92,7 +92,7 @@ class PasteControllerIntegrationTest {
         new PasteDTO(pasteDTO.getLink(), pasteDTO.getTitle(), pasteDTO.getContent(), pasteDTO.getAccess(), pasteDTO.getPubDate(), pasteDTO.getValidity());
 
         ResponseEntity<List<GetPastaDTO>> responseEntity = restTemplate.exchange(
-                "/my-awesome-pastebin.tld/" + pasteDTO.getTitle(),
+                "/my-awesome-pastebin.tld/info/" + pasteDTO.getTitle(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<GetPastaDTO>>() {
@@ -108,6 +108,35 @@ class PasteControllerIntegrationTest {
         assertEquals(pasteDTO.getLink(), returnedPaste.getLink());
         assertEquals(pasteDTO.getTitle(), returnedPaste.getTitle());
         assertEquals(pasteDTO.getContent(), returnedPaste.getContent());
+    }
+
+    @Test
+    void testGetByHash() {
+        Paste paste = new Paste();
+        paste.setTitle("title");
+        paste.setContent("content");
+        paste.setPubDate(Instant.now());
+        paste.setAccess(Access.PUBLIC.getAccess());
+        paste.setValidity(Instant.now().plus(1, ChronoUnit.DAYS));
+        paste.setLink("http://my-awesome-pastebin.tld/" + RandomStringUtils.randomAlphabetic(8));
+        Paste pasteDTO = pasteRepository.save(paste);
+        new PasteDTO(pasteDTO.getLink(), pasteDTO.getTitle(), pasteDTO.getContent(), pasteDTO.getAccess(), pasteDTO.getPubDate(), pasteDTO.getValidity());
+
+        String hash = pasteDTO.getLink().substring(pasteDTO.getLink().lastIndexOf("/") + 1);
+
+        ResponseEntity<ListPastaDTO> responseEntity = restTemplate.exchange(
+                "/my-awesome-pastebin.tld/" + hash,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<ListPastaDTO>() {
+                });
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+
+        ListPastaDTO pasteT = responseEntity.getBody();
+        assertNotNull(pasteT);
+        assertEquals(pasteDTO.getLink(), pasteT.getLink());
+        assertEquals(pasteDTO.getTitle(), pasteT.getTitle());
     }
 }
 
