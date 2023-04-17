@@ -2,6 +2,8 @@ package com.example.pastebin.repository;
 
 import com.example.pastebin.model.Paste;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
@@ -14,14 +16,10 @@ public interface PasteRepository extends JpaRepository<Paste, String> {
 
     List<Paste> findByAccessAndTitleContainingIgnoreCaseOrAccessAndContentContainingIgnoreCase(String access, String title, String access2, String content);
 
-    void deleteAllByValidityBefore(Instant now);
+    @Modifying
+    @Query(value="delete from Paste p where p.validity < now()")
+    void deleteAll(Instant now);
 
 
-
-
-
-
-
-
-
+    List<Paste> findByValidityBefore(Instant now);
 }

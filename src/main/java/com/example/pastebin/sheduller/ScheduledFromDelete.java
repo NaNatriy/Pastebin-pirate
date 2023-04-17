@@ -17,10 +17,10 @@ public class ScheduledFromDelete {
     }
 
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 3600000)
     @Transactional
     public void deleteExpiredPastes() {
         Instant now = Instant.now();
-            pasteRepository.deleteAllByValidityBefore(now);
+            pasteRepository.deleteAll(now);
     }
 }

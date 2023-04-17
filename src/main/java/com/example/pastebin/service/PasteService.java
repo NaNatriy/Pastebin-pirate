@@ -7,17 +7,16 @@ import com.example.pastebin.enums.Access;
 import com.example.pastebin.enums.ExpirationTime;
 import com.example.pastebin.model.Paste;
 import com.example.pastebin.repository.PasteRepository;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class PasteService {
     private final PasteRepository pasteRepository;
-
     public PasteService(PasteRepository pasteRepository) {
         this.pasteRepository = pasteRepository;
     }
@@ -29,19 +28,24 @@ public class PasteService {
         paste.setPubDate(Instant.now());
         paste.setAccess(access.getAccess());
         paste.setValidity(Instant.now().plus(time.getTime(), time.getUnit()));
-        paste.setLink("http://my-awesome-pastebin.tld/" + UUID.randomUUID().toString().substring(0, 7));
+        paste.setLink("http://my-awesome-pastebin.tld/" + RandomStringUtils.randomAlphabetic(8) );
         Paste newPaste = pasteRepository.save(paste);
-        return dto.toDto(newPaste);
+        return new PasteDTO(newPaste.getLink(), newPaste.getTitle(), newPaste.getContent(), newPaste.getAccess(), newPaste.getPubDate(), newPaste.getValidity() );
     }
 
     public List<ListPastaDTO> getLastTenPast() {
+        List<Paste> toDelete = pasteRepository.findByValidityBefore(Instant.now());
+        pasteRepository.deleteAll(toDelete);
+
         List<Paste> pastes = pasteRepository.findTop10ByAccessOrderByPubDate("public");
         return pastes.stream().map(p -> new ListPastaDTO(p.getLink(), p.getTitle())).collect(Collectors.toList());
     }
 
     public List<GetPastaDTO> getByTitleAndContent(String title, String content) {
+        List<Paste> toDelete = pasteRepository.findByValidityBefore(Instant.now());
+        pasteRepository.deleteAll(toDelete);
+
         List<Paste> pastes = pasteRepository.findByAccessAndTitleContainingIgnoreCaseOrAccessAndContentContainingIgnoreCase("public", title, "public", content);
         return pastes.stream().map(p -> new GetPastaDTO(p.getLink(), p.getTitle(), p.getContent())).collect(Collectors.toList());
     }
-
 }

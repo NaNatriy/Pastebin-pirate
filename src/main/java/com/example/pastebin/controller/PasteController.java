@@ -23,7 +23,7 @@ public class PasteController {
         this.pasteService = pasteService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<PasteDTO> createPaste(@RequestBody PasteDTO pasteDTO,
                                                 @RequestParam Access access,
                                                 @RequestParam ExpirationTime expirationTime) {
@@ -32,8 +32,8 @@ public class PasteController {
     }
 
     @GetMapping("/search")
-    public List<ListPastaDTO> get10LastPaste() {
-        return pasteService.getLastTenPast();
+    public ResponseEntity<List<ListPastaDTO>> get10LastPaste() {
+        return ResponseEntity.status(HttpStatus.OK).body(pasteService.getLastTenPast()) ;
     }
 
     @GetMapping("/{text}")
