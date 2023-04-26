@@ -11,7 +11,7 @@ public class GetPastaDTO {
     private String content;
 
     public GetPastaDTO(String link, String title, String content) {
-        this.link = link;
+        this.link = "http://my-awesome-pastebin.tld/" + link;
         this.title = title;
         this.content = content;
     }

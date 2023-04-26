@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+
 @Component
 @Slf4j
 public class ScheduledFromDelete {
@@ -17,10 +18,10 @@ public class ScheduledFromDelete {
     }
 
 
-    @Scheduled(fixedDelay = 3600000)
+    @Scheduled(fixedDelayString = "${scheduled.deleteExpiredPastes.delay}")
     @Transactional
     public void deleteExpiredPastes() {
         Instant now = Instant.now();
-            pasteRepository.deleteAll(now);
+        pasteRepository.deleteAll(now);
     }
 }

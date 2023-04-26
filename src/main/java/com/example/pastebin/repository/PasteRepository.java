@@ -16,8 +16,6 @@ public interface PasteRepository extends JpaRepository<Paste, String> {
 
     List<Paste> findTop10ByAccessOrderByPubDate(String access);
 
-//    List<Paste> findByAccessAndTitleContainingIgnoreCaseOrAccessAndContentContainingIgnoreCase(String access, String title, String access2, String content);
-
     @Query(value = "SELECT * FROM paste WHERE access = :access AND (LOWER(title) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) OR access = :access AND (LOWER(content) LIKE LOWER(CONCAT('%', :searchTerm, '%')))", nativeQuery = true)
     List<Paste> findByAccessAndTitleContainingIgnoreCaseOrAccessAndContentContainingIgnoreCase(
             @Param("access") String access,
@@ -25,7 +23,7 @@ public interface PasteRepository extends JpaRepository<Paste, String> {
     );
 
     @Modifying
-    @Query(value="delete from Paste p where p.validity < now()")
+    @Query(value = "delete from Paste p where p.validity < now()")
     void deleteAll(Instant now);
 
     Optional<Paste> findByLinkEndingWith(String hash);

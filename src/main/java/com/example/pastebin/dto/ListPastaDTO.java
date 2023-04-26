@@ -14,7 +14,7 @@ public class ListPastaDTO {
     private String title;
 
     public ListPastaDTO(String link, String title) {
-        this.link = link;
+        this.link = "http://my-awesome-pastebin.tld/" + link;
         this.title = title;
     }
 
