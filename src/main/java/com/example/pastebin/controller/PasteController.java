@@ -33,12 +33,12 @@ public class PasteController {
 
     @GetMapping("/search")
     public ResponseEntity<List<ListPastaDTO>> get10LastPaste() {
-        return ResponseEntity.status(HttpStatus.OK).body(pasteService.getLastTenPast()) ;
+        return ResponseEntity.status(HttpStatus.OK).body(pasteService.getLastTenPast());
     }
 
     @GetMapping("info/{text}")
     public ResponseEntity<List<GetPastaDTO>> getByText(@PathVariable String text) {
-    return ResponseEntity.status(HttpStatus.OK).body(pasteService.getByTitleAndContent(text));
+        return ResponseEntity.status(HttpStatus.OK).body(pasteService.getByTitleAndContent(text));
     }
 
     @GetMapping("/{link}")
