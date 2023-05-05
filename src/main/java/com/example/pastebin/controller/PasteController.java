@@ -23,7 +23,7 @@ public class PasteController {
         this.pasteService = pasteService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<PasteDTO> createPaste(@RequestBody PasteDTO pasteDTO,
                                                 @RequestParam Access access,
                                                 @RequestParam ExpirationTime expirationTime) {
@@ -31,14 +31,19 @@ public class PasteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPaste);
     }
 
-    @GetMapping("/public")
-    public List<ListPastaDTO> get10LastPaste() {
-        return pasteService.getLastTenPast();
+    @GetMapping("/search")
+    public ResponseEntity<List<ListPastaDTO>> get10LastPaste() {
+        return ResponseEntity.status(HttpStatus.OK).body(pasteService.getLastTenPast());
     }
 
-    @GetMapping("/{text}")
-    public List<GetPastaDTO> getById(@PathVariable String text) {
-    return pasteService.getByTitleAndContent(text, text);
+    @GetMapping("info/{text}")
+    public ResponseEntity<List<GetPastaDTO>> getByText(@PathVariable String text) {
+        return ResponseEntity.status(HttpStatus.OK).body(pasteService.getByTitleAndContent(text));
+    }
+
+    @GetMapping("/{link}")
+    public ListPastaDTO getByHash(@PathVariable String link) {
+        return pasteService.getByHash(link);
     }
 
     @ExceptionHandler(RuntimeException.class)
